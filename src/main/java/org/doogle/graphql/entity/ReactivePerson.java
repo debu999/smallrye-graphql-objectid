@@ -1,8 +1,7 @@
 package org.doogle.graphql.entity;
 
 import io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase;
-import io.smallrye.graphql.api.AdaptToScalar;
-import io.smallrye.graphql.api.Scalar;
+import io.smallrye.graphql.api.AdaptWith;
 import io.smallrye.mutiny.Uni;
 import lombok.*;
 import org.bson.types.ObjectId;
@@ -17,15 +16,14 @@ import java.time.ZonedDateTime;
 @Builder
 public class ReactivePerson extends ReactivePanacheMongoEntityBase {
 
-    @AdaptToScalar(Scalar.String.class)
+    @AdaptWith(ObjectIdAdapter.class)
     public ObjectId id;
     public String name;
     public ZonedDateTime birth;
     public Status status;
 
-    public static Uni<ReactivePerson> deleteByIdentifier(ReactivePerson person)
-    {
+    public static Uni<ReactivePerson> deleteByIdentifier(ReactivePerson person) {
         Uni<ReactivePerson> personUni = findById(person.id);
-        return personUni.log("person").call(p->deleteById(p.id)).log("deleted");
+        return personUni.log("person").call(p -> deleteById(p.id)).log("deleted");
     }
 }
